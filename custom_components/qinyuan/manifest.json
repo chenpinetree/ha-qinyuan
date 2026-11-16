@@ -1,0 +1,9 @@
+{
+  "domain": "qinyuan",
+  "name": "沁园净水机 (Qinyuan Water Purifier)",
+  "codeowners": ["@user"],
+  "config_flow": true,
+  "documentation": "https://www.qinyuan.cn",
+  "iot_class": "cloud_polling",
+  "version": "1.0.0"
+}

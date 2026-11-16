@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "连接沁园净水机",
+        "description": "请输入从《沁园智联》抓包获取的鉴权凭证以完成接入：",
+        "data": {
+          "auth_token": "沁园云端 Authorization (Token)",
+          "iot_token": "阿里云生活物联网 iotToken",
+          "app_secret": "阿里云 AppSecret (可选)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "连接沁园云端失败，请检查 Token 是否有效"
+    },
+    "abort": {
+      "already_configured": "该设备已经配置在 Home Assistant 中"
+    }
+  }
+}
