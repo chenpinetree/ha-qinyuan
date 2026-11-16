@@ -30,30 +30,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         app_secret=app_secret,
     )
 
-    # Fetch device list to initialize coordinator
-    devices = await api.async_get_device_list()
-    if not devices:
-        _LOGGER.error("Failed to find any Qinyuan devices on account")
-        return False
-
-    # Choose device matching entry or default to first online device
-    device_info = devices[0]
-    for dev in devices:
-        if dev.get("productModel") == "KRL3913" or dev.get("status") == 1:
-            device_info = dev
-            break
-
-    coordinator = QinyuanDataCoordinator(
-        hass,
-        api,
-        device_id=device_info.get("deviceId", ""),
-        iot_id=device_info.get("iotId", ""),
-        product_key=device_info.get("productKey", ""),
-        device_name=device_info.get("deviceNickName", "沁园净水机"),
-        identity_id=device_info.get("identityId", ""),
-    )
-
+    coordinator = QinyuanDataCoordinator(hass, api)
     await coordinator.async_config_entry_first_refresh()
+
+    if not coordinator.data:
+        _LOGGER.error("Failed to find any Qinyuan devices on account")
+        await api.close()
+        return False
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 

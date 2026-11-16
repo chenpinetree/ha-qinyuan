@@ -38,17 +38,11 @@ class QinyuanConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not devices:
                 errors["base"] = "cannot_connect"
             else:
-                target_dev = devices[0]
-                for dev in devices:
-                    if dev.get("productModel") == "KRL3913" or dev.get("status") == 1:
-                        target_dev = dev
-                        break
-
-                await self.async_set_unique_id(target_dev.get("deviceId"))
+                await self.async_set_unique_id("qinyuan_account")
                 self._abort_if_unique_id_configured()
 
                 return self.async_create_entry(
-                    title=target_dev.get("deviceNickName", "沁园净水机"),
+                    title="沁园净水机",
                     data={
                         CONF_AUTH_TOKEN: auth_token,
                         CONF_IOT_TOKEN: iot_token,

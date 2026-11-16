@@ -22,10 +22,13 @@ async def async_setup_entry(
     """Set up Qinyuan binary sensors based on a config entry."""
     coordinator: QinyuanDataCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    entities: list[BinarySensorEntity] = [
-        QinyuanConnectivitySensor(coordinator),
-        QinyuanPurifyingSensor(coordinator),
-    ]
+    entities: list[BinarySensorEntity] = []
+
+    for device_id in coordinator.data.keys():
+        entities.extend([
+            QinyuanConnectivitySensor(coordinator, device_id),
+            QinyuanPurifyingSensor(coordinator, device_id),
+        ])
 
     async_add_entities(entities)
 
@@ -33,26 +36,26 @@ async def async_setup_entry(
 class QinyuanConnectivitySensor(QinyuanBaseEntity, BinarySensorEntity):
     """Binary sensor for cloud connectivity."""
 
-    def __init__(self, coordinator: QinyuanDataCoordinator) -> None:
-        super().__init__(coordinator)
-        self._attr_name = f"{coordinator.device_name} 在线状态"
-        self._attr_unique_id = f"{coordinator.device_id}_connectivity"
+    def __init__(self, coordinator: QinyuanDataCoordinator, device_id: str) -> None:
+        super().__init__(coordinator, device_id)
+        self._attr_name = f"{self.device_name} 在线状态"
+        self._attr_unique_id = f"{device_id}_connectivity"
         self._attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
 
     @property
     def is_on(self) -> bool:
-        return self.coordinator.data.get("status") == 1
+        return self.dev_data.get("status") == 1
 
 
 class QinyuanPurifyingSensor(QinyuanBaseEntity, BinarySensorEntity):
     """Binary sensor for purifying state."""
 
-    def __init__(self, coordinator: QinyuanDataCoordinator) -> None:
-        super().__init__(coordinator)
-        self._attr_name = f"{coordinator.device_name} 制水状态"
-        self._attr_unique_id = f"{coordinator.device_id}_purifying"
+    def __init__(self, coordinator: QinyuanDataCoordinator, device_id: str) -> None:
+        super().__init__(coordinator, device_id)
+        self._attr_name = f"{self.device_name} 制水状态"
+        self._attr_unique_id = f"{device_id}_purifying"
         self._attr_icon = "mdi:water-sync"
 
     @property
     def is_on(self) -> bool:
-        return self.coordinator.data.get("pure_state") == 1
+        return self.dev_data.get("pure_state") == 1
